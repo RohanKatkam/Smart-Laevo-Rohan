@@ -19,7 +19,9 @@
 
 
 // Declaring Macros for SAMD21 Targets for Edge Impulse
+#ifndef __STATIC_FORCEINLINE
 #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+#endif
 #define __SSAT(ARG1, ARG2) \
     __extension__ \
     ({                          \
