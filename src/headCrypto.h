@@ -24,6 +24,14 @@ void setupECCX08(){
     ECCX08SelfSignedCert.beginReconstruction(0, 8);
     ECCX08SelfSignedCert.setCommonName(ECCX08.serialNumber());
     ECCX08SelfSignedCert.endReconstruction();
+
+    // Set a callback to get the current time
+    // used to validate the servers certificate
+    ArduinoBearSSL.onGetTime(getTime);
+
+    // Set the ECCX08 slot to use for the private key
+    // and the accompanying public certificate for it
+    // sslClient.setEccSlot(0, ECCX08SelfSignedCert.bytes(), ECCX08SelfSignedCert.length());
 }
 
 #endif
