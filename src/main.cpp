@@ -17,6 +17,7 @@
 #include "headIMU.h"
 // #include "headMQTT_NB.h"
 
+const int slavePin = 4;
 
 // Declaring Macros for SAMD21 Targets for Edge Impulse
 #ifndef __STATIC_FORCEINLINE
@@ -50,6 +51,16 @@ void setup(){
   _lastMessagePublished = _currentTime;
 
   initDataBuffer();
+
+// Slave Select
+pinMode(slavePin, OUTPUT);
+digitalWrite(slavePin, HIGH);
+
+// Initialise and Setup SPI
+SPI.begin();
+SPI.setClockDivider(SPI_CLOCK_DIV4);
+SPI.setBitOrder(MSBFIRST);
+SPI.setDataMode(SPI_MODE0);
 }
 
 void loop(){
@@ -71,7 +82,7 @@ void loop(){
         endCurrentDataSegment();
         createNewDataSegment(UNUSED);
         }
-        Serial.println("not used");
+        // Serial.println("not used");
         use = 0;
         _lastDetectedState = UNUSED;
     }
@@ -83,7 +94,7 @@ void loop(){
     signal_t signal;
     int err = numpy::signal_from_buffer(buffer, EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE, &signal);
     if (err != 0){
-        Serial.println("Failed to create signal from buffer" + err);
+        // Serial.println("Failed to create signal from buffer" + err);
         return;
     }
 
@@ -113,7 +124,7 @@ void loop(){
         //if largest score was the same for 3 classifications in a row, check if the last detected state is this one
             if (index_largest_value != _lastDetectedState){
                 //managing data
-                Serial.println("Detected new state of use...\n");
+                // Serial.println("Detected new state of use...\n");
                 endCurrentDataSegment();
                 createNewDataSegment(index_largest_value);
                 _lastDetectedState = index_largest_value;
@@ -121,7 +132,7 @@ void loop(){
         }
         // anomaly detected
         else{
-        Serial.println("Detected anomaly...\n");
+        // Serial.println("Detected anomaly...\n");
             if (_lastDetectedState != ANOMALY){
                 endCurrentDataSegment();
                 createNewDataSegment(ANOMALY);
@@ -133,4 +144,13 @@ void loop(){
     else{
         Serial.println("no movement\n");
     }
+    // https://stackoverflow.com/questions/505021/get-bytes-from-stdstring-in-c
+    
+    // Send to Slave MKR
+    digitalWrite(slavePin, LOW);
+    // SPI.beginTransaction(DEFAULT_SPI_SETTINGS);
+    SPI.transfer(42);
+    // SPI.endTransaction();
+    Serial.println("Data Transferred Over SPI");
+    digitalWrite(slavePin, HIGH);
 }
