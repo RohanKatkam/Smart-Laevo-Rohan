@@ -149,7 +149,8 @@ void loop(){
     // Send to Slave MKR
     digitalWrite(slavePin, LOW);
     // SPI.beginTransaction(DEFAULT_SPI_SETTINGS);
-    SPI.transfer(42);
+    // SPI.transfer(42);
+    SPI.transfer(getIntState());
     // SPI.endTransaction();
     Serial.println("Data Transferred Over SPI");
     digitalWrite(slavePin, HIGH);

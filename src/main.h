@@ -79,6 +79,9 @@ void reset_useBuffer();
 bool is_useBufferEmpty();
 
 
+uint8_t getIntState();
+
+
 // Constants:
 #define WINDOW_SIZE         80
 #define BUF_SIZE            256
@@ -206,6 +209,24 @@ void endCurrentDataSegment()
   Serial.println("Data ended successfully.\n");
 }
 
+uint8_t getIntState()
+{
+  /*It might be worth considering to implement a way to make "continuous" data;
+  for instance, if we send a message that ends with a certain state, most of the
+  time the next message will begin with the same state in data, but might lead
+  to discontinuities when processing the results in the end. It might bee a
+  back-end problem, or it could maybe be solved here.*/
+  Serial.println("Instanciating message...\n");
+  String message = "";
+  uint8_t intState = 42;
+  Serial.println("Message instanciated.\nScanning data for completing message...\n");
+  for (size_t i = 0; i < _dataCount; i++)
+  {
+     intState = _data[i][0];
+  }
+  return intState;
+}
+
 String makeMessageFromData()
 {
   /*It might be worth considering to implement a way to make "continuous" data;
@@ -215,6 +236,7 @@ String makeMessageFromData()
   back-end problem, or it could maybe be solved here.*/
   Serial.println("Instanciating message...\n");
   String message = "";
+  uint8_t int_state_to_send = 42;
   Serial.println("Message instanciated.\nScanning data for completing message...\n");
   for (size_t i = 0; i < _dataCount; i++)
   {
@@ -269,6 +291,7 @@ String makeMessageFromData()
   }
   return message; 
 }
+
 
 void reset_useBuffer()
 {
