@@ -10,6 +10,7 @@
 #include <ArduinoMqttClient.h>
 #include <SPI.h>
 #include <SerialFlash.h>
+#include <MKRNB.h>
 
 #include "main.h"
 #include "arduino_secrets.h"
@@ -37,9 +38,13 @@ const int slavePin = 4;
 void setup(){
   Serial.begin(BAUD_RATE);
   
+  Serial.println("Setup ECC");
   setupECCX08();  
+  Serial.println("Setup ECC done");
   
+  Serial.println("Setup IMU");
   setupIMU();
+  Serial.println("Setup IMU done");
 
   if (EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME != 9) 
   {
@@ -61,9 +66,14 @@ SPI.begin();
 SPI.setClockDivider(SPI_CLOCK_DIV4);
 SPI.setBitOrder(MSBFIRST);
 SPI.setDataMode(SPI_MODE0);
+
+SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
+Serial.println("Setup SPI done");
 }
 
 void loop(){
+    uint8_t data_to_send;
+    // Serial.println("Getting IMU data!");
     float buffer[EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE] = { 0 };
   
     float *dataBuffer = readIMU(buffer);
@@ -128,6 +138,7 @@ void loop(){
                 endCurrentDataSegment();
                 createNewDataSegment(index_largest_value);
                 _lastDetectedState = index_largest_value;
+                if (_lastDetectedState > ANOMALY) _lastDetectedState = ANOMALY;
             }
         }
         // anomaly detected
@@ -150,8 +161,10 @@ void loop(){
     digitalWrite(slavePin, LOW);
     // SPI.beginTransaction(DEFAULT_SPI_SETTINGS);
     // SPI.transfer(42);
-    SPI.transfer(getIntState());
+    data_to_send = getIntState();
+    SPI.transfer(data_to_send);
     // SPI.endTransaction();
-    Serial.println("Data Transferred Over SPI");
+    Serial.print("Data Transferred Over SPI: ");
+    Serial.println(data_to_send);
     digitalWrite(slavePin, HIGH);
 }

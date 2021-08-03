@@ -10,7 +10,7 @@
 #include <ArduinoECCX08.h>
 #include <utility/ECCX08SelfSignedCert.h>
 #include <ArduinoMqttClient.h>
-#include <MKRNB.h>
+// #include <MKRNB.h>
 #include <SPI.h>
 #include <SerialFlash.h>
 
@@ -216,10 +216,10 @@ uint8_t getIntState()
   time the next message will begin with the same state in data, but might lead
   to discontinuities when processing the results in the end. It might bee a
   back-end problem, or it could maybe be solved here.*/
-  Serial.println("Instanciating message...\n");
+  // Serial.println("Instanciating message...\n");
   String message = "";
   uint8_t intState = 42;
-  Serial.println("Message instanciated.\nScanning data for completing message...\n");
+  Serial.println("Message instanciated.\n Scanning data for completing message...\n");
   for (size_t i = 0; i < _dataCount; i++)
   {
      intState = _data[i][0];
