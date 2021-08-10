@@ -1,5 +1,5 @@
 // NB settings
-#define SECRET_PINNUMBER ""
+// #define SECRET_PINNUMBER ""
 
 // Fill in the hostname of your Azure IoT Hub broker
 #define SECRET_BROKER    "Laevo-project.azure-devices.net"
