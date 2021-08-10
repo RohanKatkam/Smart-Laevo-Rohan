@@ -16,7 +16,7 @@
 
 #include "arduino_secrets.h"
 
-#define BAUD_RATE 9600
+#define BAUD_RATE 115200
 
 /**
  * @brief Gets the current time from the cellular module.

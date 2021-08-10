@@ -10,7 +10,7 @@
 #include <ArduinoMqttClient.h>
 #include <SPI.h>
 #include <SerialFlash.h>
-#include <MKRNB.h>
+// #include <MKRNB.h>
 
 #include "main.h"
 #include "arduino_secrets.h"
@@ -67,7 +67,9 @@ SPI.setClockDivider(SPI_CLOCK_DIV4);
 SPI.setBitOrder(MSBFIRST);
 SPI.setDataMode(SPI_MODE0);
 
+#ifdef BLE33
 SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
+#endif
 Serial.println("Setup SPI done");
 }
 
@@ -162,7 +164,13 @@ void loop(){
     // SPI.beginTransaction(DEFAULT_SPI_SETTINGS);
     // SPI.transfer(42);
     data_to_send = getIntState();
-    SPI.transfer(data_to_send);
+    if(data_to_send == 0){
+        SPI.transfer(ANOMALY);    
+    }
+    else{
+        SPI.transfer(data_to_send);
+    }
+    
     // SPI.endTransaction();
     Serial.print("Data Transferred Over SPI: ");
     Serial.println(data_to_send);
